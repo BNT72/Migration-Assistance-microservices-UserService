@@ -1,0 +1,25 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: user
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5433/ObtainingCitizenship
+    username: postgres
+    password: root
+  flyway:
+    url: jdbc:postgresql://localhost:5433/ObtainingCitizenship
+    user: postgres
+    password: root
+
+
+jwt:
+  secret: asf4g79wr7ge98qw54gfssdawqerer4d5f64sdfsd49f8
+  expiration: 86400
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8083/eureka
+
