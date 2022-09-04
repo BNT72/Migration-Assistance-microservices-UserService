@@ -1,0 +1,1 @@
+Insert INTO usr  (username,password,role) VALUES ('user','user','ROLE_USER'),('root','root','ROLE_MODERATOR')

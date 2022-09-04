@@ -41,19 +41,26 @@ public class AuthService {
 
     public Mono<ResponseEntity> register(ServerWebExchange exchange) {
         return exchange.getFormData()
-                .flatMap(stringStringMultiValueMap -> userService.
-                        findByUsername(stringStringMultiValueMap.getFirst("username"))
-                        .cast(User.class)
-                        .map(user -> Objects.equals(null, user)
-                                ? ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
-                                : ResponseEntity.status(HttpStatus.CONFLICT).build()
-                        ).defaultIfEmpty(ResponseEntity.ok(
-                                userService.saveUser(
-                                        User.builder()
-                                                .username(stringStringMultiValueMap.getFirst("username"))
-                                                .password(stringStringMultiValueMap.getFirst("password"))
-                                                .role(UserRole.ROLE_USER)
-                                                .build()))
-                        ));
+                .flatMap(stringStringMultiValueMap ->
+                        userService.
+                                findByUsername(stringStringMultiValueMap.getFirst("username"))
+                                .cast(User.class)
+                                .map(user -> Objects.equals(null, user)
+                                        ? ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+                                        : ResponseEntity.status(HttpStatus.CONFLICT).build()
+                                ).defaultIfEmpty(ResponseEntity.ok(
+                                        saveAndGetToken(
+                                                User.builder()
+                                                        .username(stringStringMultiValueMap.getFirst("username"))
+                                                        .password(stringStringMultiValueMap.getFirst("password"))
+                                                        .role(UserRole.ROLE_USER)
+                                                        .build()))
+                                ));
+    }
+
+
+    public Mono<ResponseEntity> saveAndGetToken(User user) {
+
+        return userService.saveUser(user).flatMap(userDetails -> Mono.just(jwtUtil.generateToken(user)));
     }
 }
